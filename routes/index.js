@@ -3,6 +3,7 @@ var router = express.Router();
 var Promise = require('bluebird');
 
 var controllers = require('../controllers');
+var models = require('../models');
 
 router.get('/organizations', (req, res, next) => {
   controllers.organizations.findAll()
@@ -25,6 +26,23 @@ router.get('/organizations/:ownerId/repositories', (req, res, next) => {
 
 });
 
+router.get('/organizations/:id/issues', async (req, res, next) => {
+  const { id } = req.params;
+  const { status, count } = req.query;
+
+  let issues = await controllers.organizations.findAllIssues(id, req.query);
+
+  res.json( issues );
+});
+
+router.get('/organizations/:id/pullrequests', async (req, res, next) => {
+  const { id } = req.params;
+
+  let pullrequests = await controllers.organizations.findAllPullrequests(id, req.query);
+
+  res.json(pullrequests);
+});
+
 router.get('/repositories', (req, res, next) => {
   controllers.repositories.findAll()
   .then( repos => {
@@ -33,7 +51,10 @@ router.get('/repositories', (req, res, next) => {
 });
 
 router.get('/issues', (req, res, next) => {
-  res.send('issues');
+  controllers.issues.findAll()
+  .then( issues => {
+    res.send( JSON.stringify(issues) );
+  })
 });
 
 router.get('/pullrequests', (req, res, next) => {
@@ -44,8 +65,34 @@ router.get('/users', (req, res, next) => {
   res.send('users');
 });
 
-router.get('/supporters', (req, res, next) => {
-  res.send('supporters');
+router.get('/supporters', async (req, res, next) => {
+  let { name, user } = req.query;
+
+  let query = {};
+
+  if( name ) {
+    query.name = name;
+  }
+
+  if( user ) {
+    query.user = user;
+  }
+
+  const fields = { name: 1, user: 1 };
+  var supporters = await models.Supporter.find(query, fields);
+  res.json(supporters);
+});
+
+router.post('/login', async (req, res, next) => {
+  const { user, password } = req.body;
+
+  let supporter = await models.Supporter.findOne({ user: user });
+
+  if( supporter.password === password ) {
+    res.send( supporter._id );
+  }
+
+  res.send('ok');
 });
 
 module.exports = router;
