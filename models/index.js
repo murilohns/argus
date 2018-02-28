@@ -1,17 +1,17 @@
-const Issue = require('./issue');
-const Organization = require('./organization');
-const PullRequest = require('./pullrequest');
-const Repository = require('./repository');
-const User = require('./user');
-const Comment = require('./comment');
-const Supporter = require('./supporter');
+const issue = require('./issue');
+const organization = require('./organization');
+const pullRequest = require('./pullrequest');
+const repository = require('./repository');
+const user = require('./user');
+const comment = require('./comment');
+const supporter = require('./supporter');
 
 module.exports = {
-  Issue,
-  Organization,
-  PullRequest,
-  Repository,
-  User,
-  Comment,
-  Supporter
+  issue,
+  organization,
+  pullRequest,
+  repository,
+  user,
+  comment,
+  supporter
 };

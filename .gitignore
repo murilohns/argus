@@ -1,1 +1,4 @@
 node_modules/
+coverage/
+backup.json/
+.nyc_output/

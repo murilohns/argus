@@ -2,7 +2,10 @@ var mongoose = require('mongoose');
 var chalk = require('chalk');
 var Promise = require('bluebird');
 
-mongoose.connect('mongodb://localhost/perryworker');
+var mongoUrl = process.env.NODE_ENV === 'test' ? 'mongodb://localhost/testing' : 'mongodb://localhost/perryworker';
+console.log(mongoUrl);
+
+mongoose.connect(mongoUrl);
 mongoose.promise = Promise;
 var db = mongoose.connection;
 
