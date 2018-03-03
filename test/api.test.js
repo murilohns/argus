@@ -9,7 +9,7 @@ chai.use(chaiHttp);
 
 describe('Api', () => {
 
-  it('should return connection status', async () => {
+  it('should return connection status', async function() {
 
     let response = await chai.request(server)
     .get('/status')

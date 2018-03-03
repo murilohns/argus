@@ -1,6 +1,3 @@
-process.env.NODE_ENV = 'test';
-process.env.MONGO_URL = 'mongodb://localhost/testing';
-
 let chai = require('chai');
 let chaiHttp = require('chai-http');
 let mongoose = require('mongoose');
@@ -15,32 +12,22 @@ chai.use(chaiHttp);
 describe('Organizations', () => {
 
   beforeEach( async function() {
-    await Organization.remove();
-  })
-
-  // after( function(done) {
-  //   mongoose.connection.close(done);
-  // })
+    await Organization.remove({});
+  });
 
   it('should return all organizations', async function() {
-    let organizations = [
-      {
-        name: 'Test organization',
-        login: 'testorg',
-        githubId: '1'
-      },
-      {
-        name: 'Another one',
-        login: 'anone',
-        githubId: '2'
-      }
-    ];
 
-    let promises = organizations.map(
-      function(org) { return new Organization(org).save() }
-    );
+    await new Organization({
+      name: 'Test Organization',
+      login: 'testorg',
+      githubId: '1'
+    }).save();
 
-    await Promise.all(promises);
+    await new Organization({
+      name: 'Another Test Organization',
+      login: 'anothertestorg',
+      githubId: '2'
+    }).save();
 
     let response = await chai.request(server)
     .get('/organizations')
@@ -48,8 +35,31 @@ describe('Organizations', () => {
 
     let json = JSON.parse(response.text);
 
+    expect(response).to.have.status(200);
     expect(json).to.be.an('Array');
     expect(json).to.have.lengthOf(2);
+  });
+
+  it('should return one organization', async function() {
+
+    let organization = await new Organization({
+      name: 'Test Organization',
+      login: 'testorg',
+      githubId: '1'
+    }).save();
+
+    let response = await chai.request(server)
+    .get(`/organizations/${organization._id}`)
+    .send();
+
+    let json = JSON.parse(response.text);
+
+    expect(response).to.have.status(200);
+    expect(json).to.be.a('object');
+    expect(json).to.have.property('name');
+    expect(json).to.have.property('login');
+    expect(json).to.have.property('githubId');
+    expect(json).to.have.property('_id').eql(organization.id);
   });
 
 });
