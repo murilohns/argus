@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var { Schema } = mongoose;
 
 const organizationSchema = new mongoose.Schema({
   githubId: { type: String, required: true, unique: true },

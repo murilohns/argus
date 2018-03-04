@@ -1,6 +1,6 @@
+/* eslint-env node, mocha */
 let chai = require('chai');
 let chaiHttp = require('chai-http');
-let mongoose = require('mongoose');
 
 let server = require('../index');
 
@@ -12,20 +12,20 @@ describe('Api', () => {
   it('should return connection status', async function() {
 
     let response = await chai.request(server)
-    .get('/status')
-    .send();
+      .get('/status')
+      .send();
 
     expect(response).to.have.status(200);
   });
 
   it('should return 404 for undefined route', (done) => {
 
-    let response = chai.request(server)
-    .get('/what-in-oblivion-is-that')
-    .end( res => {
-      expect(res).to.have.status(404);
-      done();
-    });
+    chai.request(server)
+      .get('/what-in-oblivion-is-that')
+      .end( res => {
+        expect(res).to.have.status(404);
+        done();
+      });
 
   });
 

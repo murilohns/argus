@@ -1,21 +1,30 @@
+/* eslint-env node, mocha */
 let chai = require('chai');
 let chaiHttp = require('chai-http');
 let mongoose = require('mongoose');
+let Mongo = require('../controllers/mongo');
 
 let server = require('../index');
 
-let Organization = require('../models/organization');
-let Repository = require('../models/repository');
-let Issue = require('../models/issue');
-let User = require('../models/user');
+let {
+  Issue
+} = require('../models');
 
 const expect = chai.expect;
 chai.use(chaiHttp);
 
 describe('Issues', () => {
 
+  before( async function() {
+    await Mongo().connect();
+  });
+
   beforeEach( async function() {
     await Issue.remove({});
+  });
+
+  after( async function() {
+    await Mongo().close();
   });
 
   it('should return all issues', async function() {
@@ -47,8 +56,8 @@ describe('Issues', () => {
     }).save();
 
     let response = await chai.request(server)
-    .get('/issues')
-    .send();
+      .get('/issues')
+      .send();
 
     let json = JSON.parse(response.text);
 
@@ -72,8 +81,8 @@ describe('Issues', () => {
     }).save();
 
     let response = await chai.request(server)
-    .get(`/issues/${issue._id}`)
-    .send();
+      .get(`/issues/${issue._id}`)
+      .send();
 
     let json = JSON.parse(response.text);
 

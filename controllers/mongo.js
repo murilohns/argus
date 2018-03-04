@@ -2,18 +2,27 @@ var mongoose = require('mongoose');
 var chalk = require('chalk');
 var Promise = require('bluebird');
 
-var mongoUrl = process.env.NODE_ENV === 'test' ? 'mongodb://localhost/testing' : 'mongodb://localhost/perryworker';
+mongoose.Promise = Promise;
 
-mongoose.connect(mongoUrl);
-mongoose.promise = Promise;
-var db = mongoose.connection;
+function Database() {
 
-db.once('open', () => {
-  console.log('mongoose ' + chalk.green('connected'));
-});
+  return {
+    connect: () => {
+      mongoose.connection.once('open', () => {
+        console.log('mongoose ' + chalk.green('connected'));
+      });
 
-db.once('close', () => {
-  console.log('mongoose ' + chalk.red('disconnected'));
-});
+      mongoose.connection.once('close', () => {
+        console.log('mongoose ' + chalk.red('disconnected'));
+      });
 
-module.exports = db;
+      const url = process.env.NODE_ENV === 'test'? 'mongodb://localhost/testing' : 'mongodb://localhost/perryworker';
+      mongoose.connect(url);
+    },
+    close: () => {
+      mongoose.connection.close();
+    }
+  };
+}
+
+module.exports = Database;
