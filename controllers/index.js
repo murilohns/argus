@@ -1,7 +1,9 @@
-var organizations = require('./organizations');
-var repositories = require('./repositories');
+const organization = require('./organization');
+const repository = require('./repository');
+const issue = require('./issue');
 
 module.exports = {
-  organizations,
-  repositories
+  organization,
+  repository,
+  issue
 };

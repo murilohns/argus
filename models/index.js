@@ -1,15 +1,17 @@
-import Issue from './issue';
-import Organization from './organization';
-import PullRequest from './pullrequest';
-import Repository from './repository';
-import User from './user';
-import Comment from './comment';
+const Issue = require('./issue');
+const Organization = require('./organization');
+const PullRequest = require('./pullrequest');
+const Repository = require('./repository');
+const User = require('./user');
+const Comment = require('./comment');
+const Supporter = require('./supporter');
 
-export default {
+module.exports = {
   Issue,
   Organization,
   PullRequest,
   Repository,
   User,
-  Comment
-}
+  Comment,
+  Supporter
+};
