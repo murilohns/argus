@@ -1,22 +1,26 @@
 const Promise = require('bluebird');
 
 const {
+  connectionManager
+} = require('../database/helpers');
+
+const {
   Organization,
   Repository,
   Issue
-} = require('../models');
+} = require('../database/models');
 
-const find = async query => {
+const find = connectionManager(async query => {
   let organizations = await Organization.find(query);
   return organizations;
-};
+});
 
-const findOne = async query => {
+const findOne = connectionManager(async query => {
   let organization = await Organization.findOne(query);
   return organization;
-};
+});
 
-const findIssues = async id => {
+const findIssues = connectionManager(async id => {
   let repositories = await Repository.find({ ownerId: id });
   let promises = repositories.map( repo => Issue.find({ repositoryId: repo._id }) );
 
@@ -24,7 +28,7 @@ const findIssues = async id => {
   issues = issues.reduce( (arr, row) => arr.concat(row) );
 
   return issues;
-};
+});
 
 module.exports = {
   find,
