@@ -9,6 +9,7 @@ const {
 
 const find = async query => {
   Mongo().connect();
+
   query = query !== undefined? query : {};
   let count = query.count || 50;
 

@@ -1,5 +1,6 @@
 let express = require('express');
 let router = express.Router();
+let bcrypt = require('bcrypt');
 
 let controllers = require('../controllers');
 
@@ -53,6 +54,31 @@ router.get('/repositories/:id', async (req, res) => {
 
   let repositories = await controllers.repository.findOne({ _id: id });
   res.json(repositories);
+});
+
+router.get('/supporters', async (req, res) => {
+  let supporters = await controllers.supporter.find();
+  res.json(supporters);
+});
+
+router.get('/supporters/:id', async (req, res) => {
+  const { id } = req.params;
+
+  let supporter = await controllers.supporter.findOne({ _id: id });
+  res.json(supporter);
+});
+
+router.post('/supporters/login', async (req, res) => {
+  const { user, password } = req.body;
+
+  let supporter = await controllers.supporter.findOne({ user: user });
+  let authenticate = await bcrypt.compare(password, supporter.password);
+
+  supporter = supporter.toObject();
+  delete supporter.password;
+  let response = authenticate? supporter : 'Wrong username or password';
+
+  res.json(response);
 });
 
 router.get('*', async (req, res) => {
