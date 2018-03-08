@@ -17,17 +17,15 @@ chai.use(chaiHttp);
 
 describe('Organizations', () => {
 
-  before( async function() {
-    await Mongo().connect();
-  });
-
   beforeEach( async function() {
+    await Mongo().connect();
+
     await Organization.remove({});
     await Repository.remove({});
     await Issue.remove({});
   });
 
-  after( async function() {
+  afterEach( async function() {
     await Mongo().close();
   });
 

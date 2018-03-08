@@ -7,4 +7,4 @@ const SupporterSchema = new Schema({
   password: { type: String, required: true }
 });
 
-module.exports = mongoose.model('Supporter', SupporterSchema);
+module.exports = mongoose.model('supporters', SupporterSchema);

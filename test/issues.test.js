@@ -7,7 +7,8 @@ let Mongo = require('../database/connection');
 let server = require('../index');
 
 let {
-  Issue
+  Issue,
+  Comment
 } = require('../database/models');
 
 const expect = chai.expect;
@@ -15,21 +16,20 @@ chai.use(chaiHttp);
 
 describe('Issues', () => {
 
-  before( async function() {
-    await Mongo().connect();
-  });
-
   beforeEach( async function() {
+    await Mongo().connect();
+
     await Issue.remove({});
+    await Comment.remove({});
   });
 
-  after( async function() {
+  afterEach( async function() {
     await Mongo().close();
   });
 
   it('should return all issues', async function() {
 
-    await new Issue({
+    let issueWithComment = await new Issue({
       githubId: '1',
       title: 'Test Issue',
       bodyText: 'What in oblivion is that?!',
@@ -40,6 +40,14 @@ describe('Issues', () => {
       assignees: [ mongoose.Types.ObjectId() ],
       repositoryId: mongoose.Types.ObjectId(),
       commentsCount: 7
+    }).save();
+
+    await new Comment({
+      githubId: '1',
+      bodyText: 'I used to be an adventurer like you, then I took an arrow in the knee.',
+      author: mongoose.Types.ObjectId(),
+      model: 'issue',
+      modelId: issueWithComment._id
     }).save();
 
     await new Issue({

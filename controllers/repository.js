@@ -1,20 +1,22 @@
-const {
-  connectionManager
-} = require('../database/helpers');
+const Mongo = require('../database/connection');
 
 const {
   Repository
 } = require('../database/models');
 
-const find = connectionManager(async query => {
+const find = async query => {
+  Mongo().connect();
   let repositories = await Repository.find(query);
+  Mongo().close();
   return repositories;
-});
+};
 
-const findOne = connectionManager(async query => {
+const findOne = async query => {
+  Mongo().connect();
   let repository = await Repository.findOne(query);
+  Mongo().close();
   return repository;
-});
+};
 
 module.exports = {
   find,

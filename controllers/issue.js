@@ -1,6 +1,4 @@
-const {
-  connectionManager
-} = require('../database/helpers');
+const Mongo = require('../database/connection');
 
 const {
   Issue,
@@ -9,7 +7,8 @@ const {
   Comment
 } = require('../database/models');
 
-const find = connectionManager(async query => {
+const find = async query => {
+  Mongo().connect();
   query = query !== undefined? query : {};
   let count = query.count || 50;
 
@@ -35,14 +34,17 @@ const find = connectionManager(async query => {
   });
 
   issues = await Promise.all(promises);
+  Mongo().close();
 
   return issues;
-});
+};
 
-const findOne = connectionManager(async query => {
+const findOne = async query => {
+  Mongo().connect();
   let issue = await Issue.findOne(query);
+  Mongo().close();
   return issue;
-});
+};
 
 module.exports = {
   find,

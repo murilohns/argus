@@ -15,15 +15,13 @@ const {
 
 describe('Repositories', function() {
 
-  before( async function() {
-    await Mongo().connect();
-  });
-
   beforeEach( async function() {
+    await Mongo().connect();
+
     await Repository.remove({});
   });
 
-  after( async function(){
+  afterEach( async function(){
     await Mongo().close();
   });
 

@@ -1,8 +1,5 @@
 const Promise = require('bluebird');
-
-const {
-  connectionManager
-} = require('../database/helpers');
+const Mongo = require('../database/connection');
 
 const {
   Organization,
@@ -10,25 +7,31 @@ const {
   Issue
 } = require('../database/models');
 
-const find = connectionManager(async query => {
+const find = async query => {
+  Mongo().connect();
   let organizations = await Organization.find(query);
+  Mongo().close();
   return organizations;
-});
+};
 
-const findOne = connectionManager(async query => {
+const findOne = async query => {
+  Mongo().connect();
   let organization = await Organization.findOne(query);
+  Mongo().close();
   return organization;
-});
+};
 
-const findIssues = connectionManager(async id => {
+const findIssues = async id => {
+  Mongo().connect();
   let repositories = await Repository.find({ ownerId: id });
   let promises = repositories.map( repo => Issue.find({ repositoryId: repo._id }) );
 
   let issues = await Promise.all(promises);
+  Mongo().close();
   issues = issues.reduce( (arr, row) => arr.concat(row) );
 
   return issues;
-});
+};
 
 module.exports = {
   find,
