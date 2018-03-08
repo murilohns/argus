@@ -2,7 +2,7 @@
 let chai = require('chai');
 let chaiHttp = require('chai-http');
 let mongoose = require('mongoose');
-let Mongo = require('../controllers/mongo');
+let Mongo = require('../database/connection');
 
 let server = require('../index');
 
@@ -10,24 +10,22 @@ const {
   Organization,
   Repository,
   Issue
-} = require('../models');
+} = require('../database/models');
 
 const expect = chai.expect;
 chai.use(chaiHttp);
 
 describe('Organizations', () => {
 
-  before( async function() {
-    await Mongo().connect();
-  });
-
   beforeEach( async function() {
+    await Mongo().connect();
+
     await Organization.remove({});
     await Repository.remove({});
     await Issue.remove({});
   });
 
-  after( async function() {
+  afterEach( async function() {
     await Mongo().close();
   });
 

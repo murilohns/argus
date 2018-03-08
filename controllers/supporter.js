@@ -1,21 +1,21 @@
 const Mongo = require('../database/connection');
 
 const {
-  Repository
+  Supporter
 } = require('../database/models');
 
 const find = async query => {
   Mongo().connect();
-  let repositories = await Repository.find(query);
+  let supporters = await Supporter.find(query);
   Mongo().close();
-  return repositories;
+  return supporters;
 };
 
 const findOne = async query => {
   Mongo().connect();
-  let repository = await Repository.findOne(query);
+  let supporter = await Supporter.findOne(query);
   Mongo().close();
-  return repository;
+  return supporter;
 };
 
 module.exports = {
