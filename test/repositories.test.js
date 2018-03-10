@@ -10,6 +10,7 @@ chai.use(chaiHttp);
 let server = require('../index');
 
 const {
+  Organization,
   Repository
 } = require('../database/models');
 
@@ -18,6 +19,7 @@ describe('Repositories', function() {
   beforeEach( async function() {
     await Mongo().connect();
 
+    await Organization.remove({});
     await Repository.remove({});
   });
 
@@ -76,6 +78,35 @@ describe('Repositories', function() {
     expect(request).to.have.status(200);
     expect(json).to.be.a('object');
     expect(json).to.have.property('_id').eql(repo.id);
+  });
+
+  it('should return all organization\'s repositories', async function() {
+
+    let org = await new Organization({
+      githubId: '1',
+      url: 'https://www.github.com',
+      login: 'testorg',
+      name: 'Test Organization'
+    }).save();
+
+    await new Repository({
+      githubId: '1',
+      name: 'Test Repository',
+      ownerModel: 'organization',
+      ownerId: org._id,
+      primaryLanguage: 'Javascript',
+      url: 'https://www.github.com'
+    }).save();
+
+    let request = await chai.request(server)
+      .get(`/repositories?organization=${org.login}`)
+      .send();
+
+    let json = JSON.parse(request.text);
+
+    expect(request).to.have.status(200);
+    expect(json).to.be.a('array');
+    expect(json).to.have.lengthOf(1);
   });
 
 });

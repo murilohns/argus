@@ -4,6 +4,12 @@ const {
   Supporter
 } = require('../database/models');
 
+const removePassword = supporter => {
+  supporter = supporter.toObject();
+  delete supporter.password;
+  return supporter;
+};
+
 const find = async query => {
   Mongo().connect();
   let supporters = await Supporter.find(query);
@@ -20,5 +26,6 @@ const findOne = async query => {
 
 module.exports = {
   find,
-  findOne
+  findOne,
+  removePassword
 };

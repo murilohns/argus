@@ -4,6 +4,10 @@ let bcrypt = require('bcrypt');
 
 let controllers = require('../controllers');
 
+const {
+  removeNullProperties
+} = require('./requestHelpers');
+
 router.get('/status', (req, res) => {
   res.send('I\'m alive!');
 });
@@ -26,14 +30,17 @@ router.get('/organizations/:id/issues', async (req, res) => {
   res.json(issues);
 });
 
-router.get('/organizations/:id/repositories', async (req, res) => {
-  const { id } = req.params;
-  let repositories = await controllers.repository.find({ ownerId: id });
-  res.json(repositories);
-});
-
 router.get('/issues', async (req, res) => {
-  let issues = await controllers.issue.find(req.query);
+  let { repository, state } = req.query;
+
+  let query = {
+    repositoryId: repository? await controllers.repository.findOne({ name: repository }).then( repo => repo._id ) : null,
+    state: state || null
+  };
+
+  query = removeNullProperties(query);
+
+  let issues = await controllers.issue.find(query);
   res.json(issues);
 });
 
@@ -45,7 +52,17 @@ router.get('/issues/:id', async (req, res) => {
 });
 
 router.get('/repositories', async (req, res) => {
-  let repositories = await controllers.repository.find();
+  let { organization } = req.query;
+
+  let query = {
+    ownerId: organization? await controllers.organization.findOne(
+      { login: organization }
+    ).then( res => res._id ) : null
+  };
+
+  query = removeNullProperties(query);
+
+  let repositories = await controllers.repository.find(query);
   res.json(repositories);
 });
 
@@ -58,6 +75,7 @@ router.get('/repositories/:id', async (req, res) => {
 
 router.get('/supporters', async (req, res) => {
   let supporters = await controllers.supporter.find();
+  supporters = supporters.map( supporter => controllers.supporter.removePassword(supporter) );
   res.json(supporters);
 });
 
@@ -65,6 +83,7 @@ router.get('/supporters/:id', async (req, res) => {
   const { id } = req.params;
 
   let supporter = await controllers.supporter.findOne({ _id: id });
+  supporter = controllers.supporter.removePassword(supporter);
   res.json(supporter);
 });
 
@@ -72,11 +91,10 @@ router.post('/supporters/login', async (req, res) => {
   const { user, password } = req.body;
 
   let supporter = await controllers.supporter.findOne({ user: user });
-  let authenticate = await bcrypt.compare(password, supporter.password);
+  let isCorrectPassword = await bcrypt.compare(password, supporter.password);
 
-  supporter = supporter.toObject();
-  delete supporter.password;
-  let response = authenticate? supporter : 'Wrong username or password';
+  supporter = controllers.supporter.removePassword(supporter);
+  let response = isCorrectPassword? supporter : 'Wrong username or password';
 
   res.json(response);
 });

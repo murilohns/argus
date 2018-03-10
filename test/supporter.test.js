@@ -67,6 +67,7 @@ describe('Supporters', () => {
     expect(response).to.have.status(200);
     expect(json).to.be.a('object');
     expect(json).to.have.property('_id').eql(sup.id);
+    expect(json).to.not.have.property('password');
   });
 
   it('should authenticate with correct credentials', async function() {
@@ -100,7 +101,7 @@ describe('Supporters', () => {
 
     let request = await chai.request(server)
       .post('/supporters/login')
-      .send({ 'user': 'capedbaldy', 'password': '17' });
+      .send({ 'user': 'capedbaldy', 'password': 'wrongpassword' });
 
     let json = JSON.parse(request.text);
 

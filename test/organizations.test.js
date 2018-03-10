@@ -156,33 +156,4 @@ describe('Organizations', () => {
     expect(json).to.have.lengthOf(2);
   });
 
-  it('should return all organization repositories', async function() {
-
-    let org = await new Organization({
-      name: 'Test organization',
-      login: 'testorg',
-      githubId: '1'
-    }).save();
-
-    let repo = await new Repository({
-      githubId: '1',
-      name: 'Test Repository',
-      ownerModel: 'organization',
-      ownerId: org.id,
-      primaryLanguage: 'Javascript',
-      url: 'https://www.github.com'
-    }).save();
-
-    let response = await chai.request(server)
-      .get(`/organizations/${org.id}/repositories`)
-      .send();
-
-    let json = JSON.parse(response.text);
-
-    expect(response).to.have.status(200);
-    expect(json).to.be.a('array');
-    expect(json).to.have.lengthOf(1);
-    expect(json[0]).to.have.property('_id').eql(repo.id);
-  });
-
 });

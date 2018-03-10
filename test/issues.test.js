@@ -7,6 +7,7 @@ let Mongo = require('../database/connection');
 let server = require('../index');
 
 let {
+  Repository,
   Issue,
   Comment
 } = require('../database/models');
@@ -19,6 +20,7 @@ describe('Issues', () => {
   beforeEach( async function() {
     await Mongo().connect();
 
+    await Repository.remove({});
     await Issue.remove({});
     await Comment.remove({});
   });
@@ -107,6 +109,81 @@ describe('Issues', () => {
     expect(json).to.have.property('repositoryId');
     expect(json).to.have.property('commentsCount');
     expect(json).to.have.property('_id').eql(issue.id);
+  });
+
+  it('should return all repository\'s issues', async function() {
+
+    let repo = await new Repository({
+      githubId: '1',
+      name: 'testrepo',
+      ownerModel: 'organization',
+      ownerId: mongoose.Types.ObjectId(),
+      primaryLanguage: 'Javascript',
+      url: 'https://www.github.com'
+    }).save();
+
+    await new Issue({
+      githubId: '1',
+      title: 'Test Issue',
+      bodyText: 'What in oblivion is that?!',
+      state: 'OPEN',
+      url: 'https://www.github.com',
+      createdAt: new Date(),
+      authorId: mongoose.Types.ObjectId(),
+      assignees: [ mongoose.Types.ObjectId() ],
+      repositoryId: repo.id,
+      commentsCount: 7
+    }).save();
+
+    let request = await chai.request(server)
+      .get(`/issues?repository=${repo.name}`)
+      .send();
+
+    let json = JSON.parse(request.text);
+
+    expect(request).to.have.status(200);
+    expect(json).to.be.a('array');
+    expect(json).to.have.lengthOf(1);
+  });
+
+  it('should return open issues only', async function() {
+
+    await new Issue({
+      githubId: '1',
+      title: 'Open Issue',
+      bodyText: 'Description...',
+      state: 'OPEN',
+      url: 'https://www.github.com',
+      createdAt: new Date(),
+      authorId: mongoose.Types.ObjectId(),
+      assignees: [ mongoose.Types.ObjectId() ],
+      repositoryId: mongoose.Types.ObjectId(),
+      commentsCount: 17
+    }).save();
+
+    await new Issue({
+      githubId: '2',
+      title: 'Closed Issue',
+      bodyText: 'Description...',
+      state: 'CLOSED',
+      url: 'https://www.github.com',
+      createdAt: new Date(),
+      authorId: mongoose.Types.ObjectId(),
+      assignees: [ mongoose.Types.ObjectId() ],
+      repositoryId: mongoose.Types.ObjectId(),
+      commentsCount: 7
+    }).save();
+
+    let request = await chai.request(server)
+      .get('/issues?state=OPEN')
+      .send();
+
+    let json = JSON.parse(request.text);
+
+    expect(request).to.have.status(200);
+    expect(json).to.be.a('array');
+    expect(json).to.have.lengthOf(1);
+    expect(json[0]).to.have.property('state').eql('OPEN');
   });
 
 });
