@@ -2,7 +2,6 @@
 let chai = require('chai');
 let chaiHttp = require('chai-http');
 let mongoose = require('mongoose');
-let Mongo = require('../database/connection');
 
 const expect = chai.expect;
 chai.use(chaiHttp);
@@ -17,14 +16,8 @@ const {
 describe('Repositories', function() {
 
   beforeEach( async function() {
-    await Mongo().connect();
-
     await Organization.remove({});
     await Repository.remove({});
-  });
-
-  afterEach( async function(){
-    await Mongo().close();
   });
 
   it('should return all repositories', async function() {

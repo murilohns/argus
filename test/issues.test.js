@@ -2,7 +2,6 @@
 let chai = require('chai');
 let chaiHttp = require('chai-http');
 let mongoose = require('mongoose');
-let Mongo = require('../database/connection');
 
 let server = require('../index');
 
@@ -18,15 +17,9 @@ chai.use(chaiHttp);
 describe('Issues', () => {
 
   beforeEach( async function() {
-    await Mongo().connect();
-
     await Repository.remove({});
     await Issue.remove({});
     await Comment.remove({});
-  });
-
-  afterEach( async function() {
-    await Mongo().close();
   });
 
   it('should return all issues', async function() {

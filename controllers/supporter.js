@@ -1,5 +1,3 @@
-const Mongo = require('../database/connection');
-
 const {
   Supporter
 } = require('../database/models');
@@ -11,21 +9,23 @@ const removePassword = supporter => {
 };
 
 const find = async query => {
-  Mongo().connect();
   let supporters = await Supporter.find(query);
-  Mongo().close();
   return supporters;
 };
 
 const findOne = async query => {
-  Mongo().connect();
   let supporter = await Supporter.findOne(query);
-  Mongo().close();
+  return supporter;
+};
+
+const save = async query => {
+  let supporter = await new Supporter(query).save();
   return supporter;
 };
 
 module.exports = {
   find,
   findOne,
-  removePassword
+  removePassword,
+  save
 };

@@ -1,5 +1,3 @@
-const Mongo = require('../database/connection');
-
 const {
   Issue,
   Repository,
@@ -8,8 +6,6 @@ const {
 } = require('../database/models');
 
 const find = async query => {
-  Mongo().connect();
-
   query = query !== undefined? query : {};
   let count = query.count || 50;
 
@@ -35,15 +31,11 @@ const find = async query => {
   });
 
   issues = await Promise.all(promises);
-  Mongo().close();
-
   return issues;
 };
 
 const findOne = async query => {
-  Mongo().connect();
   let issue = await Issue.findOne(query);
-  Mongo().close();
   return issue;
 };
 

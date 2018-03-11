@@ -1,7 +1,6 @@
 /* eslint-env node, mocha */
 let chai = require('chai');
 let chaiHttp = require('chai-http');
-let Mongo = require('../database/connection');
 let bcrypt = require('bcrypt');
 
 let server = require('../index');
@@ -16,13 +15,7 @@ chai.use(chaiHttp);
 describe('Supporters', () => {
 
   beforeEach( async function() {
-    await Mongo().connect();
-
     await Supporter.remove({});
-  });
-
-  afterEach( async function() {
-    await Mongo().close();
   });
 
   it('should return all supporters', async function() {
@@ -108,6 +101,19 @@ describe('Supporters', () => {
     expect(request).to.have.status(200);
     expect(json).to.be.a('string');
     expect(json).to.equal('Wrong username or password');
+  });
+
+  it('should register supporter', async function() {
+    const user = { name: 'Test User', user: 'testuser', password: '123' };
+
+    let request = await chai.request(server)
+      .post('/supporters/register')
+      .send(user);
+
+    let json = JSON.parse(request.text);
+
+    expect(request).to.have.status(200);
+    expect(json).to.have.property('user').eql(user.user);
   });
 
 });

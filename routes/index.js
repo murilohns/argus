@@ -91,12 +91,24 @@ router.post('/supporters/login', async (req, res) => {
   const { user, password } = req.body;
 
   let supporter = await controllers.supporter.findOne({ user: user });
-  let isCorrectPassword = await bcrypt.compare(password, supporter.password);
 
-  supporter = controllers.supporter.removePassword(supporter);
-  let response = isCorrectPassword? supporter : 'Wrong username or password';
+  let response = 'Wrong username or password';
+  if( supporter !== null ) {
+    let isCorrectPassword = await bcrypt.compare(password, supporter.password);
+    supporter = controllers.supporter.removePassword(supporter);
+    response = isCorrectPassword? supporter : response;
+  }
 
   res.json(response);
+});
+
+router.post('/supporters/register', async (req, res) => {
+  const { name, user, password } = req.body;
+  let encryptedPassword = await bcrypt.hash(password, 10);
+
+  let supporter = await controllers.supporter.save({ name, user, password: encryptedPassword });
+  supporter = controllers.supporter.removePassword(supporter);
+  res.json(supporter);
 });
 
 router.get('*', async (req, res) => {
