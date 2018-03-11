@@ -10,6 +10,7 @@ const IssueSchema = new Schema({
   createdAt: { type: Date, required: true },
   authorId: { type: Schema.Types.ObjectId, required: true },
   assignees: { type: [ Schema.Types.ObjectId ] },
+  assignedSupporter: { type: Schema.Types.ObjectId },
   repositoryId: { type: Schema.Types.ObjectId, required: true },
   commentsCount: { type: Number, default: 0 }
 });

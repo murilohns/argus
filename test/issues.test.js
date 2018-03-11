@@ -8,7 +8,8 @@ let server = require('../index');
 let {
   Repository,
   Issue,
-  Comment
+  Comment,
+  Supporter
 } = require('../database/models');
 
 const expect = chai.expect;
@@ -20,6 +21,7 @@ describe('Issues', () => {
     await Repository.remove({});
     await Issue.remove({});
     await Comment.remove({});
+    await Supporter.remove({});
   });
 
   it('should return all issues', async function() {
@@ -177,6 +179,39 @@ describe('Issues', () => {
     expect(json).to.be.a('array');
     expect(json).to.have.lengthOf(1);
     expect(json[0]).to.have.property('state').eql('OPEN');
+  });
+
+  it('should assign supporter to issue', async function() {
+
+    let supporter = await new Supporter({
+      name: 'Test User',
+      user: 'testuser',
+      password: '123'
+    }).save();
+
+    let issue = await new Issue({
+      githubId: '1',
+      title: 'Closed Issue',
+      bodyText: 'Description...',
+      state: 'CLOSED',
+      url: 'https://www.github.com',
+      createdAt: new Date(),
+      authorId: mongoose.Types.ObjectId(),
+      assignees: [ mongoose.Types.ObjectId() ],
+      repositoryId: mongoose.Types.ObjectId(),
+      commentsCount: 7
+    }).save();
+
+    let request = await chai.request(server)
+      .put(`/issues/${issue.id}/assign`)
+      .send({ supporter: supporter._id });
+
+    let json = JSON.parse(request.text);
+
+    expect(request).to.have.status(200);
+    expect(json).to.be.a('object');
+    expect(json).to.have.property('_id').eql(issue.id);
+    expect(json).to.have.property('assignedSupporter').eql(supporter.id);
   });
 
 });

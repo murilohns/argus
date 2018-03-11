@@ -51,6 +51,14 @@ router.get('/issues/:id', async (req, res) => {
   res.json(issue);
 });
 
+router.put('/issues/:id/assign', async (req, res) => {
+  const { id } = req.params;
+  const { supporter } = req.body;
+
+  let issue = await controllers.issue.update({ _id: id }, { assignedSupporter: supporter });
+  res.json(issue);
+});
+
 router.get('/repositories', async (req, res) => {
   let { organization } = req.query;
 

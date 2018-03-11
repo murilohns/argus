@@ -39,7 +39,14 @@ const findOne = async query => {
   return issue;
 };
 
+const update = async (query, update) => {
+  let issue = await Issue.findOneAndUpdate(query, update);
+  issue = await Issue.findOne(query);
+  return issue;
+};
+
 module.exports = {
   find,
-  findOne
+  findOne,
+  update
 };
