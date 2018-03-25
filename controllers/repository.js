@@ -1,20 +1,23 @@
-const Mongo = require('../database/connection');
-
 const {
-  Repository
+  Repository,
+  Issue
 } = require('../database/models');
 
 const find = async query => {
-  Mongo().connect();
   let repositories = await Repository.find(query);
-  Mongo().close();
+  let issuesPromises = repositories.map( async repository => {
+    repository = repository.toObject();
+
+    repository.issues = await Issue.find({ repositoryId: repository._id });
+    return repository;
+  });
+
+  repositories = Promise.all(issuesPromises);
   return repositories;
 };
 
 const findOne = async query => {
-  Mongo().connect();
   let repository = await Repository.findOne(query);
-  Mongo().close();
   return repository;
 };
 

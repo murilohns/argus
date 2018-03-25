@@ -2,7 +2,6 @@
 let chai = require('chai');
 let chaiHttp = require('chai-http');
 let mongoose = require('mongoose');
-let Mongo = require('../database/connection');
 
 let server = require('../index');
 
@@ -18,15 +17,9 @@ chai.use(chaiHttp);
 describe('Organizations', () => {
 
   beforeEach( async function() {
-    await Mongo().connect();
-
     await Organization.remove({});
     await Repository.remove({});
     await Issue.remove({});
-  });
-
-  afterEach( async function() {
-    await Mongo().close();
   });
 
   it('should return all organizations', async function() {
@@ -154,35 +147,6 @@ describe('Organizations', () => {
     expect(response).to.have.status(200);
     expect(json).to.be.a('array');
     expect(json).to.have.lengthOf(2);
-  });
-
-  it('should return all organization repositories', async function() {
-
-    let org = await new Organization({
-      name: 'Test organization',
-      login: 'testorg',
-      githubId: '1'
-    }).save();
-
-    let repo = await new Repository({
-      githubId: '1',
-      name: 'Test Repository',
-      ownerModel: 'organization',
-      ownerId: org.id,
-      primaryLanguage: 'Javascript',
-      url: 'https://www.github.com'
-    }).save();
-
-    let response = await chai.request(server)
-      .get(`/organizations/${org.id}/repositories`)
-      .send();
-
-    let json = JSON.parse(response.text);
-
-    expect(response).to.have.status(200);
-    expect(json).to.be.a('array');
-    expect(json).to.have.lengthOf(1);
-    expect(json[0]).to.have.property('_id').eql(repo.id);
   });
 
 });
