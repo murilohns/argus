@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test ./node_modules/.bin/nyc ./node_modules/.bin/mocha --timeout 5000 --exit",
-    "coverage": "./node_modules/.bin/nyc report --reporter=html",
-    "eslint": "./node_modules/.bin/eslint ."
+    "start": "node ./index",
+    "test": "DB_URL=mongodb://localhost/testing nyc mocha --timeout 5000 --exit",
+    "coverage": "nyc report --reporter=html",
+    "eslint": "eslint ."
   },
   "author": "",
   "license": "ISC",
