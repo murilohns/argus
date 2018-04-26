@@ -6,6 +6,10 @@ mongoose.Promise = Promise;
 
 let url = process.env.DB_URL;
 
+mongoose.connection.on('error', () => {
+  console.log('mongoose ' + chalk.red('Error connecting to mongo'));
+})
+
 mongoose.connection.once('open', () => {
   console.log('mongoose ' + chalk.green('connected'));
 });
