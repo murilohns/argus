@@ -111,10 +111,10 @@ router.post('/supporters/login', async (req, res) => {
 });
 
 router.post('/supporters/register', async (req, res) => {
-  const { name, user, password } = req.body;
+  const { name, user, email, password } = req.body;
   let encryptedPassword = await bcrypt.hash(password, 10);
 
-  let supporter = await controllers.supporter.save({ name, user, password: encryptedPassword });
+  let supporter = await controllers.supporter.save({ name, user, email, password: encryptedPassword });
   supporter = controllers.supporter.removePassword(supporter);
   res.json(supporter);
 });

@@ -2,6 +2,8 @@ const {
   Supporter
 } = require('../database/models');
 
+const slack = require('../helpers/slack');
+
 const removePassword = supporter => {
   supporter = supporter.toObject();
   delete supporter.password;
@@ -19,6 +21,7 @@ const findOne = async query => {
 };
 
 const save = async query => {
+  query.slack_id = await slack.findIdByEmail(query.email);
   let supporter = await new Supporter(query).save();
   return supporter;
 };
