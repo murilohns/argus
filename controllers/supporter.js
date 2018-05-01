@@ -21,9 +21,22 @@ const findOne = async query => {
 };
 
 const save = async query => {
-  query.slack_id = await slack.findIdByEmail(query.email);
+  let slack_id = await slack.findIdByEmail(query.email);
+
+  if(slack_id.ok === false && slack_id.error === 'users_not_found') {
+    return {
+      status: 403,
+      data: 'Slack user not found'
+    }
+  }
+
+  query.slack_id = slack_id;
+
   let supporter = await new Supporter(query).save();
-  return supporter;
+  return {
+    status: 200,
+    data: supporter
+  };
 };
 
 module.exports = {

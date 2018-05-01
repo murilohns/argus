@@ -186,6 +186,8 @@ describe('Issues', () => {
     let supporter = await new Supporter({
       name: 'Test User',
       user: 'testuser',
+      email: 'test@email.com',
+      slack_id: '1',
       password: '123'
     }).save();
 

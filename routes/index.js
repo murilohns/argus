@@ -115,8 +115,13 @@ router.post('/supporters/register', async (req, res) => {
   let encryptedPassword = await bcrypt.hash(password, 10);
 
   let supporter = await controllers.supporter.save({ name, user, email, password: encryptedPassword });
-  supporter = controllers.supporter.removePassword(supporter);
-  res.json(supporter);
+
+  if( supporter.status !== 200 ) {
+    return res.status(supporter.status).send(supporter.data);
+  }
+
+  supporter.data = controllers.supporter.removePassword(supporter.data);
+  res.status(supporter.status).json(supporter.data);
 });
 
 router.get('*', async (req, res) => {

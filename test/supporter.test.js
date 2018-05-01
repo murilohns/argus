@@ -2,6 +2,7 @@
 let chai = require('chai');
 let chaiHttp = require('chai-http');
 let bcrypt = require('bcrypt');
+let nock = require('nock');
 
 let server = require('../index');
 
@@ -23,12 +24,16 @@ describe('Supporters', () => {
     await new Supporter({
       name: 'Saitama',
       user: 'capedbaldy',
+      email: 'saitama@capedbaldy.com',
+      slack_id: '1',
       password: '123'
     }).save();
 
     await new Supporter({
       name: 'Genos',
       user: 'demoncyborg',
+      email: 'genos@cyborg.com',
+      slack_id: '2',
       password: '123'
     }).save();
 
@@ -48,6 +53,8 @@ describe('Supporters', () => {
     let sup = await new Supporter({
       name: 'Saitama',
       user: 'capedbaldy',
+      email: 'saitama@capedbaldy.com',
+      slack_id: '1',
       password: '123'
     }).save();
 
@@ -69,6 +76,8 @@ describe('Supporters', () => {
     let sup = await new Supporter({
       name: 'Saitama',
       user: 'capedbaldy',
+      email: 'saitama@capedbaldy.com',
+      slack_id: '1',
       password: password
     }).save();
 
@@ -89,6 +98,8 @@ describe('Supporters', () => {
     await new Supporter({
       name: 'Saitama',
       user: 'capedbaldy',
+      email: 'saitama@capedbaldy.com',
+      slack_id: '1',
       password: password
     }).save();
 
@@ -104,7 +115,21 @@ describe('Supporters', () => {
   });
 
   it('should register supporter', async function() {
-    const user = { name: 'Test User', user: 'testuser', password: '123' };
+    const user = { 
+      name: 'Test User', 
+      user: 'testuser',
+      email: 'test@email.com',
+      password: '123' 
+    };
+
+    nock('https://slack.com')
+      .post('/api/users.lookupByEmail')
+      .reply(200, {
+        ok: true,
+        user: {
+          id: 1
+        }
+      });
 
     let request = await chai.request(server)
       .post('/supporters/register')
@@ -114,6 +139,30 @@ describe('Supporters', () => {
 
     expect(request).to.have.status(200);
     expect(json).to.have.property('user').eql(user.user);
+  });
+
+  it('should not register supporter without slack id', async function() {
+    const user = {
+      name: 'Saitama',
+      user: 'capedbaldy',
+      email: 'saitama@capedbaldy.com',
+      slack_id: '1',
+      password: '123'
+    };
+
+    nock('https://slack.com')
+      .post('/api/users.lookupByEmail')
+      .reply(200, {
+        ok: false,
+        error: 'users_not_found'
+      });
+
+    let request = await chai.request(server)
+      .post('/supporters/register')
+      .send(user);
+
+    expect(request).to.have.status(403);
+    expect(request.text).eql('Slack user not found');
   });
 
 });

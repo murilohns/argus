@@ -4,13 +4,10 @@ const token = process.env.SLACK_API_TOKEN;
 
 const web = new WebClient(token);
 
-const findIdByEmail = async (email) => {
-  let slackUserId = web.users.lookupByEmail({ email: email })
-    .then( res => res.user.id)
-    .catch(err => err);
-
-  return slackUserId;
-};
+const findIdByEmail = (email) =>
+  web.users.lookupByEmail({ email: email })
+    .then( res => res.user.id )
+    .catch( err => err.data )
 
 module.exports = {
   findIdByEmail
