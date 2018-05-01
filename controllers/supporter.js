@@ -27,7 +27,7 @@ const save = async query => {
     return {
       status: 403,
       data: 'Slack user not found'
-    }
+    };
   }
 
   query.slack_id = slack_id;

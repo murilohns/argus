@@ -18,15 +18,13 @@ describe('Api', () => {
     expect(response).to.have.status(200);
   });
 
-  it('should return 404 for undefined route', (done) => {
+  it('should return 404 for undefined route', async () => {
 
-    chai.request(server)
+    let response = await chai.request(server)
       .get('/what-in-oblivion-is-that')
-      .end( res => {
-        expect(res).to.have.status(404);
-        done();
-      });
+      .send();
 
+    expect(response).to.have.status(404);
   });
 
 });
