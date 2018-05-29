@@ -1,0 +1,45 @@
+{
+  "name": "pagarme-issues-dashboard",
+  "main": "./index.js",
+  "version": "0.0.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vagnervst/pagarme-issues-dashboard"
+  },
+  "author": "Vagner S",
+  "scripts": {
+    "start": "node ./index",
+    "build": "webpack"
+  },
+  "dependencies": {
+    "@argus-dashboard/components": "0.0.0-rc1",
+    "@argus-dashboard/github-extension": "^1.0.0-rc2",
+    "@argus-dashboard/server": "0.0.0",
+    "axios": "^0.18.0",
+    "body-parser": "~1.18.2",
+    "cookie-parser": "~1.4.3",
+    "express": "~4.15.5",
+    "moment-timezone": "^0.5.14",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "socket.io": "^2.0.4",
+    "webpack-cli": "^2.0.13"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^0.28.9",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.0",
+    "gulp-concat": "^2.6.1",
+    "html-loader": "^0.5.5",
+    "html-webpack-plugin": "^3.0.6",
+    "node-sass": "^4.7.2",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.19.1",
+    "webpack": "^4.2.0"
+  }
+}
