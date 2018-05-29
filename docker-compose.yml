@@ -7,8 +7,6 @@ services:
       - DB_URL=mongodb://mongodb:27017/perryworker
     ports:
       - "8070:8070"
-    networks:
-      - argus-network
     depends_on:
       - "perry-worker"
       - "mongodb"
@@ -22,14 +20,10 @@ services:
       - argus-api
     ports:
       - "8071:8071"
-    networks:
-      - argus-network
 
   mongodb:
     image: mongo
     container_name: "mongodb"
-    networks:
-      - argus-network
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongo localhost:27017 --quiet
       interval: 5s
@@ -46,9 +40,3 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
-    networks:
-      - argus-network
-
-networks:
-  argus-network:
-    driver: bridge

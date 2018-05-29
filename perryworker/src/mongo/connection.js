@@ -4,7 +4,7 @@ import Promise from 'bluebird';
 
 import config from '../config.js';
 
-mongoose.connect( `${config.get('mongo.url')}`, { useMongoClient: true } );
+mongoose.connect( config.get('mongo.url'), { useMongoClient: true } );
 mongoose.Promise = Promise;
 
 mongoose.connection.on('error', error => {
