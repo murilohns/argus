@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ./index",
+    "start": "nodemon ./index",
     "test": "DB_URL=mongodb://localhost/testing nyc mocha --timeout 5000 --exit",
     "coverage": "nyc report --reporter=html",
     "eslint": "eslint ."
@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@octokit/rest": "^15.8.1",
     "@slack/client": "^4.2.0",
     "bcrypt": "^1.0.3",
     "bluebird": "^3.5.1",
@@ -20,7 +21,8 @@
     "dotenv": "^5.0.1",
     "express": "^4.16.2",
     "mongoose": "^5.0.7",
-    "nock": "^9.2.5"
+    "nock": "^9.2.5",
+    "nodemon": "^1.17.5"
   },
   "devDependencies": {
     "chai": "^4.1.2",
