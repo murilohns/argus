@@ -3,13 +3,15 @@ services:
   argus-api:
     build:
       context: ./github-api
+    volumes:
+      - ./github-api:/home/node/app
     environment:
       - DB_URL=mongodb://mongodb:27017/perryworker
     ports:
       - "8070:8070"
     depends_on:
-      - "perry-worker"
-      - "mongodb"
+      - perry-worker
+      - mongodb
   
   argus-dashboard:
     build:
