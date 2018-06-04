@@ -59,6 +59,12 @@ router.put('/issues/:id/assign', async (req, res) => {
   res.json(issue);
 });
 
+router.post('/issues/assign', async (req, res) => {
+  const result = controllers.issue.assign(req.body);
+
+  res.status(result.status).send(result.message);
+});
+
 router.get('/repositories', async (req, res) => {
   let { organization } = req.query;
 

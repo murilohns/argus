@@ -3,3 +3,4 @@ coverage/
 backup.json/
 .nyc_output/
 .env
+!*.sample

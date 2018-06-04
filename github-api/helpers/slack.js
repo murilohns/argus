@@ -9,6 +9,12 @@ const findIdByEmail = (email) =>
     .then( res => res.user.id )
     .catch( err => err.data );
 
+const sendMessage = (params) => 
+  web.chat.postMessage(params)
+    .then( () => 'Mensagem entregue com sucesso' )
+    .catch( err => err.data );
+
 module.exports = {
-  findIdByEmail
+  findIdByEmail,
+  sendMessage
 };
